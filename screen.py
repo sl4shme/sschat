@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import curses, curses.textpad
+import curses, curses.textpad, time
 
 class Screen:
 	def __init__(self):
@@ -14,8 +14,11 @@ class Screen:
 		self.mainWindow.addch((self.ySize - 1),0,">")
 		curses.noecho()
 		self.mainWindow.refresh()
+		self.timestamp=True
 	
 	def printMessage(self, message):
+		if self.timestamp == True:
+			message=time.strftime("[%H:%M] ")+message
                 self.conversWindow.addstr(message+"\n")
                 self.conversWindow.refresh()
 

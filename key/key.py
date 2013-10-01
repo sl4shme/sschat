@@ -21,6 +21,7 @@ else:
         print "Bad key."
 	quit()
 
-print "\n\n Congratulation!"
-print "You can now connect with the user sschat."
-
+print "\n\n Congratulations!"
+print "You can now connect to the user sschat."
+print "For now, you'll most likely find people in the channel : plop "
+print "\n\nRemeber that this service comes with NO FUCKING GUARANTEE"
