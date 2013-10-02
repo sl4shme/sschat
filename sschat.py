@@ -6,6 +6,7 @@ class Sschat:
 		self.screen=screen.Screen()
                 signal.signal(signal.SIGINT, self.cleanQuit)
                 signal.signal(signal.SIGHUP, self.cleanQuit)
+	        signal.signal(signal.SIGWINCH, self.screen.handlerResize)
 		self.screen.printMessage("Hi, which channel would you like to connect to ?")
 		self.channel = self.screen.getInput()
 		while not re.match("^[A-Za-z]*$", self.channel):
@@ -83,7 +84,7 @@ class Sschat:
 			self.screen.printMessage("PM to "+pid+" : "+message)
 		elif cmd == "join":
 			pass
-		elif cmd == "history": #on off rien=afficher
+		elif cmd == "history": #on off rien=afficher int=longueur clear=vider
 			pass
 		else:
 			pass
@@ -101,3 +102,5 @@ chat.main()
 #autocompletion
 #commencer la parti admin notement brodcast message avant killall
 #verifier le user qui lance sschat
+#curses.flash
+#Le resize doit aussi reafficher la tittlewindow
