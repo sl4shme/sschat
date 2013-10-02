@@ -93,5 +93,11 @@ chat.main()
 
 #sigwinch
 #sigdecoparcebatarddessh
-
-
+#commandes
+#gestion de l'id et du nickname dans le minion pour des gestion de variable message plus clean.
+#Mettre le pid en str une bonne fois pour toute
+#refaire key.py avec des boucle et wait pour windob
+#commande bug/suggest
+#autocompletion
+#commencer la parti admin notement brodcast message avant killall
+#verifier le user qui lance sschat
