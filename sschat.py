@@ -4,8 +4,8 @@ import minion, screen, re, signal
 class Sschat:
 	def __init__(self):
 		self.screen=screen.Screen()
-                signal.signal(signal.SIGINT, self.cleanQuit)
                 signal.signal(signal.SIGHUP, self.cleanQuit)
+                signal.signal(signal.SIGINT, self.screen.clearInput)
 	        signal.signal(signal.SIGWINCH, self.screen.handlerResize)
 		self.screen.printMessage("Hi, which channel would you like to connect to ?")
 		self.channel = self.screen.getInput()

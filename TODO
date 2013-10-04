@@ -12,6 +12,5 @@
 #curses.flash / sur une window
 #Le resize doit aussi reafficher la tittlewindow
 #Need aussi de revoir le system de gestion des nick id
-#Changement de Ctrl+c
 #retrouver le __del__
 

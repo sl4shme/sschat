@@ -52,6 +52,10 @@ class Screen:
 		self.conversWindow.clear()
 		self.conversWindow.refresh()
 
+        def clearInput(self, signum=None, frame=None):
+                self.inputWindow.clear()
+                self.inputWindow.refresh()
+
 	def handlerResize(self, signum="", frame=""):
 		curses.endwin()
 		self.__init__(1)
