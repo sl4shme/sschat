@@ -1,8 +1,8 @@
-#!/usr/bin/python
-import curses, curses.textpad, time, collections
+import curses, curses.textpad, time, collections, scroll
 
 class Screen:
 	def __init__(self, resize=0):
+		self.isInHistory=0
 		self.resize=resize
 		self.mainWindow=curses.initscr()
 		self.ySize, self.xSize = self.mainWindow.getmaxyx()
@@ -16,9 +16,11 @@ class Screen:
 		curses.noecho()
 		self.mainWindow.refresh()
 		if resize == 0:
+			self.channel=""
+			self.peersCount=""
 			self.timestamp=True
 			self.doHistory=True
-			self.historyLen=20
+			self.historyLen=50
 			self.history=collections.deque(maxlen=self.historyLen)
 
 	def printMessage(self, message):
@@ -44,6 +46,8 @@ class Screen:
 		curses.endwin()
 	
         def setTitle(self, channel, people):
+		self.channel=channel
+		self.peersCount=people
                 self.titleWindow.clear()
                 self.titleWindow.addstr("Channel : "+channel+" / People : "+str(people))
                 self.titleWindow.refresh()
@@ -52,20 +56,29 @@ class Screen:
 		self.conversWindow.clear()
 		self.conversWindow.refresh()
 
-        def clearInput(self, signum=None, frame=None):
-                self.inputWindow.clear()
-                self.inputWindow.refresh()
+	def clearInput(self, signum=None, frame=None):
+		self.inputWindow.clear()
+		self.inputWindow.refresh()
 
 	def handlerResize(self, signum="", frame=""):
+		if self.isInHistory==1:
+			curses.ungetch("q")
 		curses.endwin()
 		self.__init__(1)
 		curses.ungetch(curses.ascii.NL)
 		oldH = self.doHistory
 		oldT = self.timestamp
+		self.mainWindow.clear()
 		self.doHistory = False
 		self.timestamp = False
 		for histLine in self.history:
 			self.printMessage(histLine)
 		self.doHistory = oldH
 		self.timestamp = oldT
+		self.setTitle(self.channel,self.peersCount)
 
+	def scrollPrinter(self, toPrint):
+		self.isInHistory=1
+		hist = scroll.Scroll(self.mainWindow, toPrint)
+		self.isInHistory=0
+		self.handlerResize()

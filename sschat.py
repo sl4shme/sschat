@@ -1,11 +1,11 @@
 #!/usr/bin/python
-import minion, screen, re, signal
+import minion, screen, re, signal, help, curses
 
 class Sschat:
 	def __init__(self):
 		self.screen=screen.Screen()
-                signal.signal(signal.SIGHUP, self.cleanQuit)
                 signal.signal(signal.SIGINT, self.screen.clearInput)
+                signal.signal(signal.SIGHUP, self.cleanQuit)
 	        signal.signal(signal.SIGWINCH, self.screen.handlerResize)
 		self.screen.printMessage("Hi, which channel would you like to connect to ?")
 		self.channel = self.screen.getInput()
@@ -20,6 +20,8 @@ class Sschat:
 		self.minion=minion.Minion(self.channel, self.screen, self.nickname)
 		self.screen.clearConvers()
                 self.screen.setTitle(self.channel, len(self.minion.mySocket.peers))
+#		self.screen.printMessage("Plop bande de noob, j'ai push une maj.")
+#		self.screen.printMessage("Bug report : pi3rra@root.gg pour l'instant")
 		self.screen.printMessage("/help to list available commands")
 
 	def main(self):
@@ -54,11 +56,7 @@ class Sschat:
 		if cmd == "clear":
 			self.screen.clearConvers()
 		elif cmd == "help":
-			self.screen.printMessage("Available commands : /clear /help")
-			self.screen.printMessage("/quit [message]")
-			self.screen.printMessage("/timestamp on|off")
-			self.screen.printMessage("/nickname newNickname")
-			self.screen.printMessage("/pm id message")
+			self.screen.scrollPrinter(help.help)
 		elif cmd == "quit":
 			reason=' '.join(args)
 			self.cleanQuit(0, 0, reason)
@@ -77,18 +75,31 @@ class Sschat:
 			else:
 				self.screen.printMessage("Bad nickname.")
 		elif cmd == "pm":
-			pid=args[0]
-			message=' '.join(args[1:])
-			outMessage="/msg PM from "+self.nickname+"("+str(self.minion.myPid)+") : "+message
-		        self.minion.sendMessageTo(outMessage, pid)		
-			self.screen.printMessage("PM to "+pid+" : "+message)
-		elif cmd == "join":
-			pass
-		elif cmd == "history": #on off rien=afficher int=longueur clear=vider
-			pass
+			if len(args) >= 2:
+				pid=args[0]
+				message=' '.join(args[1:])
+				outMessage="/msg PM from "+self.nickname+"("+str(self.minion.myPid)+") : "+message
+		        	self.minion.sendMessageTo(outMessage, pid)		
+				self.screen.printMessage("PM to "+pid+" : "+message)
+		elif cmd == "history": #int=longueur
+			if len(args) == 0:
+				if self.screen.doHistory == 1:
+					self.screen.scrollPrinter(self.screen.history)
+			elif args[0] == "on":
+				self.screen.doHistory=1
+			elif args[0] == "off":
+				self.screen.doHistory=0
+				self.screen.history.clear()
+			elif args[0] == "clear":
+				self.screen.history.clear()
+#			try:
+#				newValue = int(args[0])
+#   				if newValue <= 101 and newValue > 0 :
+#					pass
+#			except ValueError:
+#				pass
 		else:
-			pass
+			self.screen.printMessage("/"+mess)
 
 chat=Sschat()
 chat.main()
-

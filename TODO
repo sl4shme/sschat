@@ -1,7 +1,5 @@
 #!/bin/bash
-#sigwinch
 #sigdecoparcebatarddessh
-#commandes
 #gestion de l'id et du nickname dans le minion pour des gestion de variable message plus clean.
 #Mettre le pid en str une bonne fois pour toute
 #refaire key.py avec des boucle et wait pour windob
@@ -10,7 +8,7 @@
 #commencer la parti admin notement brodcast message avant killall
 #verifier le user qui lance sschat
 #curses.flash / sur une window
-#Le resize doit aussi reafficher la tittlewindow
 #Need aussi de revoir le system de gestion des nick id
 #retrouver le __del__
-
+#Gerer la longueur de l'historique
+#Renommer le is in history par is in scroll

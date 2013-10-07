@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import socket, os, re, hashlib, time, threading
 
 class SocketManager(threading.Thread):
@@ -34,9 +33,12 @@ class SocketManager(threading.Thread):
 
         def handlerRemPeer(self, mess):
 		pid, name, reason = mess.split("|")
-                self.peers.remove(pid)
-		self.screen.setTitle(self.workspace, len(self.peers))
-		self.screen.printMessage(name+"("+pid+") leaved. (Reason:"+reason+")")
+		try:
+	                self.peers.remove(pid)
+			self.screen.setTitle(self.workspace, len(self.peers))
+			self.screen.printMessage(name+"("+pid+") leaved. (Reason:"+reason+")")
+		except: #This doesn't belong here
+			self.screen.printMessage("message not delivered!")
 
         def handlerGetMess(self, message):
 		self.screen.printMessage(str(message))
