@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import minion, screen, re, signal, help, curses
+import minion, screen, re, signal, help
 
 class Sschat:
 	def __init__(self):
@@ -20,9 +20,7 @@ class Sschat:
 		self.minion=minion.Minion(self.channel, self.screen, self.nickname)
 		self.screen.clearConvers()
                 self.screen.setTitle(self.channel, len(self.minion.mySocket.peers))
-#		self.screen.printMessage("Plop bande de noob, j'ai push une maj.")
-#		self.screen.printMessage("Bug report : pi3rra@root.gg pour l'instant")
-		self.screen.printMessage("/help to list available commands")
+		self.motd()
 
 	def main(self):
 		while 1:
@@ -49,6 +47,14 @@ class Sschat:
         	        self.screen.stopScreen()
                 	print "Bye !"
                		quit()
+
+        def motd(self):
+                f = open('./motd', 'r')
+                lines = f.readlines()
+                f.close()
+		for line in lines :
+			self.screen.printMessage(line[:-1])
+
 
 	def command(self, mess):
 		cmd = mess.split(" ")[0]
