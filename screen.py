@@ -3,6 +3,7 @@ import curses, curses.textpad, time, collections, scroll
 class Screen:
 	def __init__(self, resize=0):
 		self.isInHistory=0
+		self.dualChar=0
 		self.resize=resize
 		self.mainWindow=curses.initscr()
 		self.ySize, self.xSize = self.mainWindow.getmaxyx()
@@ -33,7 +34,7 @@ class Screen:
 
 	def getInput(self):
 		while 1:
-			inputMessage = self.inputBox.edit()
+			inputMessage = self.inputBox.edit(self.validator)
 			if self.resize == 1:
 				self.resize=0
 				continue
@@ -41,6 +42,21 @@ class Screen:
 				self.inputWindow.clear()
 				self.inputWindow.refresh()
 				return inputMessage[:-1]
+
+        def validator(self, ch):
+                if self.dualChar == 1:
+                        self.dualChar=0
+                        if ch == 169 or ch == 168 or ch == 170:
+                                ch=101
+                        if ch == 160:
+                                ch=97
+                        if ch == 185:
+                                ch=117
+                        if ch == 167:
+                                ch=99
+                if ch == 195:
+                        self.dualChar=1
+                return ch
 	
 	def stopScreen(self):
 		curses.endwin()
