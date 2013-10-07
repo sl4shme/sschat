@@ -49,7 +49,7 @@ class Sschat:
                		quit()
 
         def motd(self):
-                f = open('./motd', 'r')
+                f = open('motd', 'r')
                 lines = f.readlines()
                 f.close()
 		for line in lines :

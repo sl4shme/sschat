@@ -14,7 +14,7 @@ class Scroll:
 	def init_pad(self):
 		self.pad = curses.newpad(self.count, self.maxyx[1])
 		for i, line in enumerate(self.content):
-			self.pad.addstr(i, 0, line)
+                       self.pad.addstr(i, 0, line[0:self.maxyx[1]])
 		self.refresh_pad()
 
 	def refresh_pad(self):
