@@ -76,6 +76,7 @@ class Screen:
 		self.doHistory = oldH
 		self.timestamp = oldT
 		self.setTitle(self.channel,self.peersCount)
+		curses.curs_set(1)
 
 	def scrollPrinter(self, toPrint):
 		self.isInHistory=1
