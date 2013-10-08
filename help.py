@@ -6,4 +6,5 @@ help=["Here are available commands :",
 "/timestamp <on|off> : Enable/disable line timestamping.",
 "/nickname <newNickname> : Change your nickname.",
 "/pm <id> <message> : Send a private message to the user with the id <id>",
-"/history [on|off|clear] : With no argument, display the last 50 message."]
+"/history [on|off|clear] : With no argument, display the last 50 message.",
+"/bug <message> : Send a bug / suggestion report."]

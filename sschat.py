@@ -8,25 +8,25 @@ class Sschat:
                 signal.signal(signal.SIGHUP, self.cleanQuit)
 	        signal.signal(signal.SIGWINCH, self.screen.handlerResize)
 		self.screen.printMessage("Hi, which channel would you like to connect to ?")
-		self.channel = self.screen.getInput()
-		while not re.match("^[A-Za-z]*$", self.channel):
+		channel = self.screen.getInput()
+		while not re.match("^[A-Za-z]*$", channel):
 			self.screen.printMessage("Bad channel name.")
-			self.channel = self.screen.getInput()
+			channel = self.screen.getInput()
 		self.screen.printMessage("What's your nickname ?")
-		self.nickname = self.screen.getInput()
-		while not re.match("^[A-Za-z]*$", self.nickname):
+		nickname = self.screen.getInput()
+		while not re.match("^[A-Za-z]*$", nickname):
 			self.screen.printMessage("Bad nickname.")
-			self.nickname = self.screen.getInput()
-		self.minion=minion.Minion(self.channel, self.screen, self.nickname)
+			nickname = self.screen.getInput()
+		self.minion=minion.Minion(channel, self.screen, nickname)
 		self.screen.clearConvers()
-                self.screen.setTitle(self.channel, len(self.minion.mySocket.peers))
+                self.screen.setTitle(channel, len(self.minion.mySocket.peers))
 		self.motd()
 
 	def main(self):
 		while 1:
 			chatMessage= self.screen.getInput()
 			if chatMessage[0] != "/":
-				chatMessage = self.nickname+"("+self.minion.pid+") : "+chatMessage
+				chatMessage = self.minion.nickname+"("+self.minion.pid+") : "+chatMessage
 				self.minion.sendMessage("/msg "+chatMessage)
 				self.screen.printMessage(chatMessage)
 			else:
@@ -42,7 +42,7 @@ class Sschat:
 		else:
 			if reason == "":
 				reason = "None"
-               		message= "/rem "+self.minion.pid+"|"+self.nickname+"|"+reason
+               		message= "/rem "+self.minion.pid+"|"+self.minion.nickname+"|"+reason
 	                self.minion.sendMessage(message)
         	        self.screen.stopScreen()
                 	print "Bye !"
@@ -56,7 +56,7 @@ class Sschat:
 			self.screen.printMessage(line[:-1])
 
         def bug(self, mess):
-                line = time.strftime("[%H:%M] ")+self.nickname+" : "+mess+"\n"
+                line = time.strftime("[%H:%M] ")+self.minion.nickname+" : "+mess+"\n"
 		try :
 	                f = open('bugReport', 'a')
 			f.write(line)
@@ -84,10 +84,10 @@ class Sschat:
 		elif cmd == "nickname":
 			nick = args[0]
 			if re.match("^[A-Za-z]*$", nick):
-				chatMessage = self.nickname+"("+self.minion.pid+") is now known as "+nick
+				chatMessage = self.minion.nickname+"("+self.minion.pid+") is now known as "+nick
 				self.minion.sendMessage("/msg "+chatMessage)
 				self.screen.printMessage(chatMessage)
-				self.nickname=nick
+				self.minion.nickname=nick
 			else:
 				self.screen.printMessage("Bad nickname.")
 		elif cmd == "bug":
@@ -97,7 +97,7 @@ class Sschat:
 			if len(args) >= 2:
 				pid=args[0]
 				message=' '.join(args[1:])
-				outMessage="/msg PM from "+self.nickname+"("+self.minion.pid+") : "+message
+				outMessage="/msg PM from "+self.minion.nickname+"("+self.minion.pid+") : "+message
 		        	self.minion.sendMessageTo(outMessage, pid)		
 				self.screen.printMessage("PM to "+pid+" : "+message)
 		elif cmd == "history": #int=longueur
