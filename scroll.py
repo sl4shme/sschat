@@ -3,6 +3,8 @@ import curses
 class Scroll:
 	def __init__(self, scr, content):
 		self.scr = scr
+		self.scr.clear()
+		self.scr.refresh()
 		self.content=content
 		self.count=len(self.content)+1
 		self.first_line = 0

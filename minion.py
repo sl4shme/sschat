@@ -1,15 +1,15 @@
-import socket, os, re, hashlib, time, threading
+import socket, os, re, hashlib, threading
 
 class SocketManager(threading.Thread):
-	def __init__(self, pid, name, hash, aff):
+	def __init__(self, pid, name, hash, scr):
         	threading.Thread.__init__(self)
-		self.screen=aff
+		self.screen=scr
 		self.workspace=name
 		self.hash=hash
-		self.myAddress='\0sschat|'+str(pid)+'|'+self.hash
+		self.address='\0sschat|'+pid+'|'+self.hash
 		self.initPeers()
 	        self.mySock=socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-		self.mySock.bind(self.myAddress)
+		self.mySock.bind(self.address)
 
 	def run(self):
         	while 1:
@@ -58,15 +58,15 @@ class SocketManager(threading.Thread):
 	
 
 class Minion:
-	def __init__(self, workspaceName, aff, nickname):
-		self.myPid=os.getpid()
+	def __init__(self, workspaceName, scr, nickname):
+		self.pid=str(os.getpid())
 		self.workspace=workspaceName
 		self.hashWorkspace=hashlib.sha256(self.workspace).hexdigest()
 		self.nickname=nickname
-		self.mySocket=SocketManager(self.myPid,self.workspace, self.hashWorkspace, aff)
+		self.mySocket=SocketManager(self.pid,self.workspace, self.hashWorkspace, scr)
 		self.mySocket.setDaemon(True)
 		self.mySocket.start()
-                message="/add "+str(self.myPid)+"|"+nickname
+                message="/add "+self.pid+"|"+nickname
                 self.sendMessage(message)
 
 	def sendMessageTo(self, outMessage, peerPid, failed=0):

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import minion, screen, re, signal, help
+import minion, screen, re, signal, help, time
 
 class Sschat:
 	def __init__(self):
@@ -26,7 +26,7 @@ class Sschat:
 		while 1:
 			chatMessage= self.screen.getInput()
 			if chatMessage[0] != "/":
-				chatMessage = self.nickname+"("+str(self.minion.myPid)+") : "+chatMessage
+				chatMessage = self.nickname+"("+self.minion.pid+") : "+chatMessage
 				self.minion.sendMessage("/msg "+chatMessage)
 				self.screen.printMessage(chatMessage)
 			else:
@@ -42,7 +42,7 @@ class Sschat:
 		else:
 			if reason == "":
 				reason = "None"
-               		message= "/rem "+str(self.minion.myPid)+"|"+self.nickname+"|"+reason
+               		message= "/rem "+self.minion.pid+"|"+self.nickname+"|"+reason
 	                self.minion.sendMessage(message)
         	        self.screen.stopScreen()
                 	print "Bye !"
@@ -54,6 +54,16 @@ class Sschat:
                 f.close()
 		for line in lines :
 			self.screen.printMessage(line[:-1])
+
+        def bug(self, mess):
+                line = time.strftime("[%H:%M] ")+self.nickname+" : "+mess+"\n"
+		try :
+	                f = open('bugReport', 'a')
+			f.write(line)
+                	f.close()
+			self.screen.printMessage("Bug sent.")			
+		except:
+			self.screen.printMessage("Bug not sent.")
 
 
 	def command(self, mess):
@@ -74,17 +84,20 @@ class Sschat:
 		elif cmd == "nickname":
 			nick = args[0]
 			if re.match("^[A-Za-z]*$", nick):
-				chatMessage = self.nickname+"("+str(self.minion.myPid)+") is now known as "+nick
+				chatMessage = self.nickname+"("+self.minion.pid+") is now known as "+nick
 				self.minion.sendMessage("/msg "+chatMessage)
 				self.screen.printMessage(chatMessage)
 				self.nickname=nick
 			else:
 				self.screen.printMessage("Bad nickname.")
+		elif cmd == "bug":
+			mess=' '.join(args)
+			self.bug(mess)
 		elif cmd == "pm":
 			if len(args) >= 2:
 				pid=args[0]
 				message=' '.join(args[1:])
-				outMessage="/msg PM from "+self.nickname+"("+str(self.minion.myPid)+") : "+message
+				outMessage="/msg PM from "+self.nickname+"("+self.minion.pid+") : "+message
 		        	self.minion.sendMessageTo(outMessage, pid)		
 				self.screen.printMessage("PM to "+pid+" : "+message)
 		elif cmd == "history": #int=longueur

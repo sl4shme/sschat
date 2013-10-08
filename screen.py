@@ -2,7 +2,7 @@ import curses, curses.textpad, time, collections, scroll
 
 class Screen:
 	def __init__(self, resize=0):
-		self.isInHistory=0
+		self.isInScroll=0
 		self.dualChar=0
 		self.resize=resize
 		self.mainWindow=curses.initscr()
@@ -77,7 +77,7 @@ class Screen:
 		self.inputWindow.refresh()
 
 	def handlerResize(self, signum="", frame=""):
-		if self.isInHistory==1:
+		if self.isInScroll==1:
 			curses.ungetch("q")
 		curses.endwin()
 		self.__init__(1)
@@ -95,7 +95,7 @@ class Screen:
 		curses.curs_set(1)
 
 	def scrollPrinter(self, toPrint):
-		self.isInHistory=1
+		self.isInScroll=1
 		hist = scroll.Scroll(self.mainWindow, toPrint)
-		self.isInHistory=0
+		self.isInScroll=0
 		self.handlerResize()
