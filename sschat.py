@@ -31,7 +31,7 @@ class Sschat:
 			self.minion
 		except AttributeError:
 	                self.screen.stopScreen()
-        	        print "Bye !"
+        	        print self.motBye()
                 	quit()
 		else:
 			if reason == "":
@@ -39,8 +39,14 @@ class Sschat:
                		message= "/rem "+self.minion.pid+"|"+self.minion.nickname+"|"+reason
 	                self.minion.sendMessage(message)
         	        self.screen.stopScreen()
-                	print "Bye !"
+        	        print self.motBye()
                		quit()
+
+	def motBye(self):
+		f = open('motb', 'r')
+		line = f.readline()
+		f.close()
+		return line[:-1]
 
         def motd(self):
                 f = open('motd', 'r')
