@@ -1,16 +1,12 @@
 #!/bin/bash
 #sigdecoparcebatarddessh
-#gestion de l'id et du nickname dans le minion pour des gestion de variable message plus clean.
 #refaire key.py avec des boucle et wait pour windob
-#commande bug/suggest
 #autocompletion
 #verifier le user qui lance sschat
 #curses.flash / sur une window
 #Need aussi de revoir le system de gestion des nick id
-#retrouver le __del__
-#Gerer la longueur de l'historique
 #switch channel
-#Ne pas afficher les message si inscroll
 #motbye
-#bug avec le /help quand les autres parles en fond
-#limiter la longeur des pseudos
+#color
+#patch curses pour l'insert
+

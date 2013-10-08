@@ -1,4 +1,4 @@
-import curses, curses.textpad, time, collections, scroll
+import curses, curses.textpad, time, collections, scroll, re
 
 class Screen:
 	def __init__(self, resize=0):
@@ -29,8 +29,9 @@ class Screen:
 			message=time.strftime("[%H:%M] ")+message
 		if self.doHistory == True:
 			self.history.append(message)
-                self.conversWindow.addstr(message+"\n")
-                self.conversWindow.refresh()
+		if self.isInScroll == 0:
+	                self.conversWindow.addstr(message+"\n")
+        	        self.conversWindow.refresh()
 
 	def getInput(self):
 		while 1:
@@ -42,6 +43,13 @@ class Screen:
 				self.inputWindow.clear()
 				self.inputWindow.refresh()
 				return inputMessage[:-1]
+
+        def strictInput(self):
+                while 1:
+                        input = self.getInput()
+                        if re.match("^[A-Za-z]*$", input) and len(input) <= 12:
+                                return input
+                        self.printMessage("Bad input.")
 
         def validator(self, ch):
                 if self.dualChar == 1:

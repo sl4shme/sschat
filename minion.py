@@ -8,12 +8,12 @@ class SocketManager(threading.Thread):
 		self.channelHash=hash
 		self.address='\0'+pid+'|'+self.channelHash
 		self.initPeers()
-	        self.mySock=socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-		self.mySock.bind(self.address)
+	        self.sock=socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+		self.sock.bind(self.address)
 
 	def run(self):
         	while 1:
-                	incomingMessage = self.mySock.recvfrom(4096)
+                	incomingMessage = self.sock.recvfrom(4096)
                 	self.handlerGetComm(incomingMessage[0])
 
 	def handlerGetComm(self, incMess):
@@ -37,14 +37,13 @@ class SocketManager(threading.Thread):
 	                self.peers.remove(pid)
 			self.screen.setTitle(self.channel, len(self.peers))
 			self.screen.printMessage(name+"("+pid+") leaved. (Reason:"+reason+")")
-		except: #This doesn't belong here
-			self.screen.printMessage("message not delivered!")
+		except:
+			pass
 
         def handlerGetMess(self, message):
 		self.screen.printMessage(str(message))
 
         def initPeers(self):
-	#je preferrerais aller les demander a un random peer
                 self.peers=[]
                 expr = re.compile(r'.*%s.*' % self.channelHash)
                 for line in open("/proc/net/unix"):
@@ -55,7 +54,6 @@ class SocketManager(threading.Thread):
                                 matchLine = matchLine[1]
                                 matchLine = matchLine.split("|", 3)
                                 self.peers.append(matchLine[0])
-	
 
 class Minion:
 	def __init__(self, channel, scr, nickname):
@@ -80,7 +78,6 @@ class Minion:
 				return	
 			failed += 1
 			self.sendMessageTo(outMessage, peerPid, failed)
-
 
 	def sendMessage(self, outMessage):
                 for peerPid in self.mySocket.peers:

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import minion, screen, re, signal, help, time
+import minion, screen, signal, help
 
 class Sschat:
 	def __init__(self):
@@ -8,15 +8,9 @@ class Sschat:
                 signal.signal(signal.SIGHUP, self.cleanQuit)
 	        signal.signal(signal.SIGWINCH, self.screen.handlerResize)
 		self.screen.printMessage("Hi, which channel would you like to connect to ?")
-		channel = self.screen.getInput()
-		while not re.match("^[A-Za-z]*$", channel):
-			self.screen.printMessage("Bad channel name.")
-			channel = self.screen.getInput()
+		channel = self.screen.strictInput()
 		self.screen.printMessage("What's your nickname ?")
-		nickname = self.screen.getInput()
-		while not re.match("^[A-Za-z]*$", nickname):
-			self.screen.printMessage("Bad nickname.")
-			nickname = self.screen.getInput()
+		nickname = self.screen.strictInput()
 		self.minion=minion.Minion(channel, self.screen, nickname)
 		self.screen.clearConvers()
                 self.screen.setTitle(channel, len(self.minion.mySocket.peers))
@@ -56,7 +50,7 @@ class Sschat:
 			self.screen.printMessage(line[:-1])
 
         def bug(self, mess):
-                line = time.strftime("[%H:%M] ")+self.minion.nickname+" : "+mess+"\n"
+                line = '#'+mess+"\n"
 		try :
 	                f = open('bugReport', 'a')
 			f.write(line)
@@ -83,7 +77,7 @@ class Sschat:
 				self.screen.timestamp=False
 		elif cmd == "nickname":
 			nick = args[0]
-			if re.match("^[A-Za-z]*$", nick):
+			if re.match("^[A-Za-z]*$", nick) and len(nick) <= 12:
 				chatMessage = self.minion.nickname+"("+self.minion.pid+") is now known as "+nick
 				self.minion.sendMessage("/msg "+chatMessage)
 				self.screen.printMessage(chatMessage)
@@ -100,7 +94,8 @@ class Sschat:
 				outMessage="/msg PM from "+self.minion.nickname+"("+self.minion.pid+") : "+message
 		        	self.minion.sendMessageTo(outMessage, pid)		
 				self.screen.printMessage("PM to "+pid+" : "+message)
-		elif cmd == "history": #int=longueur
+
+		elif cmd == "history":
 			if len(args) == 0:
 				if self.screen.doHistory == 1:
 					self.screen.scrollPrinter(self.screen.history)
@@ -111,12 +106,6 @@ class Sschat:
 				self.screen.history.clear()
 			elif args[0] == "clear":
 				self.screen.history.clear()
-#			try:
-#				newValue = int(args[0])
-#   				if newValue <= 101 and newValue > 0 :
-#					pass
-#			except ValueError:
-#				pass
 		else:
 			self.screen.printMessage("/"+mess)
 
