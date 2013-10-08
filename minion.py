@@ -1,12 +1,12 @@
 import socket, os, re, hashlib, threading
 
 class SocketManager(threading.Thread):
-	def __init__(self, pid, name, hash, scr):
+	def __init__(self, pid, channel, hash, scr):
         	threading.Thread.__init__(self)
 		self.screen=scr
-		self.workspace=name
-		self.hash=hash
-		self.address='\0sschat|'+pid+'|'+self.hash
+		self.channel=channel
+		self.channelHash=hash
+		self.address='\0'+pid+'|'+self.channelHash
 		self.initPeers()
 	        self.mySock=socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
 		self.mySock.bind(self.address)
@@ -28,14 +28,14 @@ class SocketManager(threading.Thread):
         def handlerAddPeer(self, mess):
 		pid, name = mess.split("|")
                 self.peers.append(pid)
-		self.screen.setTitle(self.workspace, len(self.peers))
+		self.screen.setTitle(self.channel, len(self.peers))
 		self.screen.printMessage(name+"("+pid+") joined.")
 
         def handlerRemPeer(self, mess):
 		pid, name, reason = mess.split("|")
 		try:
 	                self.peers.remove(pid)
-			self.screen.setTitle(self.workspace, len(self.peers))
+			self.screen.setTitle(self.channel, len(self.peers))
 			self.screen.printMessage(name+"("+pid+") leaved. (Reason:"+reason+")")
 		except: #This doesn't belong here
 			self.screen.printMessage("message not delivered!")
@@ -46,7 +46,7 @@ class SocketManager(threading.Thread):
         def initPeers(self):
 	#je preferrerais aller les demander a un random peer
                 self.peers=[]
-                expr = re.compile(r'.*%s.*' % self.hash)
+                expr = re.compile(r'.*%s.*' % self.channelHash)
                 for line in open("/proc/net/unix"):
                         match = expr.search(line)
                         if match:
@@ -54,16 +54,16 @@ class SocketManager(threading.Thread):
                                 matchLine = matchLine.split("@", 1)
                                 matchLine = matchLine[1]
                                 matchLine = matchLine.split("|", 3)
-                                self.peers.append(matchLine[1])
+                                self.peers.append(matchLine[0])
 	
 
 class Minion:
-	def __init__(self, workspaceName, scr, nickname):
+	def __init__(self, channel, scr, nickname):
 		self.pid=str(os.getpid())
-		self.workspace=workspaceName
-		self.hashWorkspace=hashlib.sha256(self.workspace).hexdigest()
+		self.channel=channel
+		self.channelHash=hashlib.sha256(self.channel).hexdigest()
 		self.nickname=nickname
-		self.mySocket=SocketManager(self.pid,self.workspace, self.hashWorkspace, scr)
+		self.mySocket=SocketManager(self.pid,self.channel, self.channelHash, scr)
 		self.mySocket.setDaemon(True)
 		self.mySocket.start()
                 message="/add "+self.pid+"|"+nickname
@@ -71,7 +71,7 @@ class Minion:
 
 	def sendMessageTo(self, outMessage, peerPid, failed=0):
 		peerSock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-                peerAddress = '\0sschat|'+str(peerPid)+'|'+self.hashWorkspace
+                peerAddress = '\0'+str(peerPid)+'|'+self.channelHash
 		try :
 	                peerSock.sendto(outMessage, peerAddress)
 		except :
