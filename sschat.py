@@ -20,7 +20,7 @@ class Sschat:
 		while 1:
 			chatMessage= self.screen.getInput()
 			if chatMessage[0] != "/":
-				chatMessage = self.minion.nickname+"("+self.minion.pid+") : "+chatMessage
+				chatMessage = self.minion.nickname+" : "+chatMessage
 				self.minion.sendMessage("/msg "+chatMessage)
 				self.screen.printMessage(chatMessage)
 			else:
@@ -73,6 +73,9 @@ class Sschat:
 			self.screen.clearConvers()
 		elif cmd == "help":
 			self.screen.scrollPrinter(help.help)
+		elif cmd == "list":
+			self.screen.printMessage("Peoples present in channel :")
+			self.minion.sendMessage("/get "+self.minion.pid)
 		elif cmd == "quit":
 			reason=' '.join(args)
 			self.cleanQuit(0, 0, reason)
@@ -100,7 +103,6 @@ class Sschat:
 				outMessage="/msg PM from "+self.minion.nickname+"("+self.minion.pid+") : "+message
 		        	self.minion.sendMessageTo(outMessage, pid)		
 				self.screen.printMessage("PM to "+pid+" : "+message)
-
 		elif cmd == "history":
 			if len(args) == 0:
 				if self.screen.doHistory == 1:

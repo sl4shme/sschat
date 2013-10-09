@@ -1,12 +1,10 @@
 import socket, os, re, hashlib, threading
 
 class SocketManager(threading.Thread):
-	def __init__(self, pid, channel, hash, scr):
+	def __init__(self, minion):
         	threading.Thread.__init__(self)
-		self.screen=scr
-		self.channel=channel
-		self.channelHash=hash
-		self.address='\0'+pid+'|'+self.channelHash
+		self.minion=minion
+		self.address='\0'+self.minion.pid+'|'+self.minion.channelHash
 		self.initPeers()
 	        self.sock=socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
 		self.sock.bind(self.address)
@@ -18,6 +16,8 @@ class SocketManager(threading.Thread):
 
 	def handlerGetComm(self, incMess):
 		if incMess[0] == "/":
+                        if incMess[1:4] == "get":
+                                self.handlerGetNick(incMess[5:])
                         if incMess[1:4] == "add":
                                 self.handlerAddPeer(incMess[5:])
                         if incMess[1:4] == "rem":
@@ -28,24 +28,27 @@ class SocketManager(threading.Thread):
         def handlerAddPeer(self, mess):
 		pid, name = mess.split("|")
                 self.peers.append(pid)
-		self.screen.setTitle(self.channel, len(self.peers))
-		self.screen.printMessage(name+"("+pid+") joined.")
+		self.minion.screen.setTitle(self.minion.channel, len(self.peers))
+		self.minion.screen.printMessage(name+" joined.")
 
         def handlerRemPeer(self, mess):
 		pid, name, reason = mess.split("|")
 		try:
 	                self.peers.remove(pid)
-			self.screen.setTitle(self.channel, len(self.peers))
-			self.screen.printMessage(name+"("+pid+") leaved. (Reason:"+reason+")")
+			self.minion.screen.setTitle(self.minion.channel, len(self.peers))
+			self.minion.screen.printMessage(name+" leaved. (Reason:"+reason+")")
 		except:
 			pass
 
         def handlerGetMess(self, message):
-		self.screen.printMessage(str(message))
+		self.minion.screen.printMessage(str(message))
+
+        def handlerGetNick(self, pid):
+		self.minion.sendMessageTo("/msg "+self.minion.nickname+" "+self.minion.pid, pid)
 
         def initPeers(self):
                 self.peers=[]
-                expr = re.compile(r'.*%s.*' % self.channelHash)
+                expr = re.compile(r'.*%s.*' % self.minion.channelHash)
                 for line in open("/proc/net/unix"):
                         match = expr.search(line)
                         if match:
@@ -58,10 +61,11 @@ class SocketManager(threading.Thread):
 class Minion:
 	def __init__(self, channel, scr, nickname):
 		self.pid=str(os.getpid())
+		self.screen=scr
 		self.channel=channel
 		self.channelHash=hashlib.sha256(self.channel).hexdigest()
 		self.nickname=nickname
-		self.mySocket=SocketManager(self.pid,self.channel, self.channelHash, scr)
+		self.mySocket=SocketManager(self)
 		self.mySocket.setDaemon(True)
 		self.mySocket.start()
                 message="/add "+self.pid+"|"+nickname

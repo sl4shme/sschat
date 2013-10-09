@@ -21,17 +21,17 @@ class Screen:
 			self.peersCount=""
 			self.timestamp=True
 			self.doHistory=True
-			self.historyLen=50
+			self.historyLen=100
 			self.history=collections.deque(maxlen=self.historyLen)
 
 	def printMessage(self, message):
-		if self.timestamp == True:
-			message=time.strftime("[%H:%M] ")+message
-		if self.doHistory == True:
-			self.history.append(message)
-		if self.isInScroll == 0:
-	                self.conversWindow.addstr(message+"\n")
-        	        self.conversWindow.refresh()
+                if self.timestamp == True:
+                        message=time.strftime("[%H:%M] ")+message
+                if self.doHistory == True:
+                        self.history.append(message)
+                if self.isInScroll == 0:
+                        self.conversWindow.addstr(message+"\n")
+                        self.conversWindow.refresh()
 
 	def getInput(self):
 		while 1:
