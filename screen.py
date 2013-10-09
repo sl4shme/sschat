@@ -10,7 +10,7 @@ class Screen:
 		self.titleWindow = curses.newwin(1, self.xSize, 0, 0)
 		self.conversWindow = curses.newwin((self.ySize - 2), self.xSize, 1, 0)
                 self.inputWindow = curses.newwin(1, (self.xSize - 1), (self.ySize - 1), 1)
-		self.inputBox = curses.textpad.Textbox(self.inputWindow)
+		self.inputBox = curses.textpad.Textbox(self.inputWindow, insert_mode=True)
 		self.inputBox.stripspaces=1
 		self.conversWindow.scrollok(True)
 		self.mainWindow.addch((self.ySize - 1),0,">")
