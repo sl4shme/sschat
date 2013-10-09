@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import minion, screen, signal, help
+import minion, screen, signal, help, re
 
 class Sschat:
 	def __init__(self):
