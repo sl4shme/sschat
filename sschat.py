@@ -35,7 +35,7 @@ class Sschat:
                 	quit()
 		else:
 			if reason == "":
-				reason = "None"
+				reason = "Deco"
                		message= "/rem "+self.minion.pid+"|"+self.minion.nickname+"|"+reason
 	                self.minion.sendMessage(message)
         	        self.screen.stopScreen()
@@ -78,6 +78,8 @@ class Sschat:
 			self.minion.sendMessage("/get "+self.minion.pid)
 		elif cmd == "quit":
 			reason=' '.join(args)
+			if reason=="":
+				reason="None"
 			self.cleanQuit(0, 0, reason)
 		elif cmd == "timestamp":
 			if args[0] == "on":

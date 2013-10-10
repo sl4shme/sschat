@@ -1,10 +1,9 @@
-#sigdecoparcebatarddessh
 #refaire key.py avec des boucle et wait pour windob
 #autocompletion
 #verifier le user qui lance sschat
-#curses.flash / sur une window
 #switch channel
 #color
 #review curses insert
 #command url
 #liste des nick
+#timer notif
