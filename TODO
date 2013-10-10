@@ -5,5 +5,6 @@
 #curses.flash / sur une window
 #switch channel
 #color
-#patch curses pour l'insert
+#review curses insert
 #command url
+

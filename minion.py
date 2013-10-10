@@ -44,7 +44,10 @@ class SocketManager(threading.Thread):
 		self.minion.screen.printMessage(str(message))
 
         def handlerGetNick(self, pid):
-		self.minion.sendMessageTo("/msg "+self.minion.nickname+" "+self.minion.pid, pid)
+		mess="/msg "+self.minion.nickname+" "+self.minion.pid
+		if self.minion.afk == True :
+			mess = mess+" <AFK>"
+		self.minion.sendMessageTo(mess, pid)
 
         def initPeers(self):
                 self.peers=[]
@@ -65,6 +68,7 @@ class Minion:
 		self.channel=channel
 		self.channelHash=hashlib.sha256(self.channel).hexdigest()
 		self.nickname=nickname
+		self.afk=False
 		self.mySocket=SocketManager(self)
 		self.mySocket.setDaemon(True)
 		self.mySocket.start()

@@ -84,6 +84,17 @@ class Sschat:
 				self.screen.timestamp=True
 			if mess.split(" ")[1] == "off":
 				self.screen.timestamp=False
+		elif cmd == "afk":
+			if self.minion.afk == False :
+				self.minion.afk = True
+				chatMessage = self.minion.nickname+" is now AFK."
+                                self.minion.sendMessage("/msg "+chatMessage)
+                                self.screen.printMessage(chatMessage)
+			else :
+				self.minion.afk = False
+				chatMessage = self.minion.nickname+" is back."
+                                self.minion.sendMessage("/msg "+chatMessage)
+                                self.screen.printMessage(chatMessage)
 		elif cmd == "nickname":
 			nick = args[0]
 			if re.match("^[A-Za-z]*$", nick) and len(nick) <= 12:
