@@ -9,4 +9,5 @@ help=["Here are available commands :",
 "/history [on|off|clear] : With no argument, display the last 50 message.",
 "/bug <message> : Send a bug / suggestion report.",
 "/list : List peoples in channel.",
-"/afk : Toggle afk."]
+"/afk : Toggle afk.",
+"/notif : Toggle visual flash notification on new message."]

@@ -80,10 +80,15 @@ class Sschat:
 			reason=' '.join(args)
 			self.cleanQuit(0, 0, reason)
 		elif cmd == "timestamp":
-			if mess.split(" ")[1] == "on":
+			if args[0] == "on":
 				self.screen.timestamp=True
-			if mess.split(" ")[1] == "off":
+			if args[0] == "off":
 				self.screen.timestamp=False
+		elif cmd == "notif":
+			if args[0] == "on":
+				self.screen.startNotif()
+			if args[0] == "off":
+				self.screen.stopNotif()
 		elif cmd == "afk":
 			if self.minion.afk == False :
 				self.minion.afk = True

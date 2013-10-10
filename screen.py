@@ -1,4 +1,18 @@
-import curses, curses.textpad, time, collections, scroll, re
+import curses, curses.textpad, time, collections, scroll, re, threading
+
+class Notifier(threading.Thread):
+        def __init__(self, interval):
+                threading.Thread.__init__(self)
+                self.active=True
+                self.flash=False
+                self.interval=interval
+
+        def run(self):
+                while self.active == True:
+                        while self.flash == True:
+                                curses.flash()
+                                time.sleep(self.interval)
+                return
 
 class Screen:
 	def __init__(self, resize=0):
@@ -21,6 +35,7 @@ class Screen:
 			self.peersCount=""
 			self.timestamp=True
 			self.doHistory=True
+			self.doNotif=False
 			self.historyLen=100
 			self.history=collections.deque(maxlen=self.historyLen)
 
@@ -52,6 +67,8 @@ class Screen:
                         self.printMessage("Bad input.")
 
         def validator(self, ch):
+		if self.doNotif == True and self.notif.flash == True:
+			self.notif.flash=False
                 if self.dualChar == 1:
                         self.dualChar=0
                         if ch == 169 or ch == 168 or ch == 170:
@@ -107,3 +124,15 @@ class Screen:
 		hist = scroll.Scroll(self.mainWindow, toPrint)
 		self.isInScroll=0
 		self.handlerResize()
+
+	def startNotif(self, interval=5):
+		if self.doNotif==False:
+	                self.notif=Notifier(interval)
+        	        self.notif.setDaemon(True)
+                	self.notif.start()
+			self.doNotif=True
+
+	def stopNotif(self):
+		if self.doNotif==True:
+			self.notif.active=False
+			self.doNotif=False

@@ -41,6 +41,8 @@ class SocketManager(threading.Thread):
 			pass
 
         def handlerGetMess(self, message):
+		if self.minion.screen.doNotif == True:
+			self.minion.screen.notif.flash = True
 		self.minion.screen.printMessage(str(message))
 
         def handlerGetNick(self, pid):
