@@ -1,4 +1,3 @@
-#refaire key.py avec des boucle et wait pour windob
 #autocompletion
 #verifier le user qui lance sschat
 #switch channel
@@ -7,3 +6,6 @@
 #command url
 #liste des nick
 #timer notif
+#help dans key
+#rsa key
+#key print : something like ssh-rsa AAAA
