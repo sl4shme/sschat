@@ -8,4 +8,5 @@ help=["Here are available commands :",
 "/pm <id> <message> : Send a private message to the user with the id <id>",
 "/history [on|off|clear] : With no argument, display the last 50 message.",
 "/bug <message> : Send a bug / suggestion report.",
-"/list : List peoples in channel."]
+"/list : List peoples in channel.",
+"/afk : Toggle afk."]
