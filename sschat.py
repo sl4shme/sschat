@@ -65,7 +65,6 @@ class Sschat:
 		except:
 			self.screen.printMessage("Bug not sent.")
 
-
 	def command(self, mess):
 		cmd = mess.split(" ")[0]
 		args = mess.split(" ")[1:]
@@ -93,15 +92,15 @@ class Sschat:
 				self.screen.stopNotif()
 		elif cmd == "afk":
 			if self.minion.afk == False :
-				self.minion.afk = True
 				chatMessage = self.minion.nickname+" is now AFK."
                                 self.minion.sendMessage("/msg "+chatMessage)
                                 self.screen.printMessage(chatMessage)
+				self.minion.afk = True
 			else :
-				self.minion.afk = False
 				chatMessage = self.minion.nickname+" is back."
                                 self.minion.sendMessage("/msg "+chatMessage)
                                 self.screen.printMessage(chatMessage)
+				self.minion.afk = False
 		elif cmd == "nickname":
 			nick = args[0]
 			if re.match("^[A-Za-z]*$", nick) and len(nick) <= 12:

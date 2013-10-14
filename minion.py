@@ -1,5 +1,21 @@
 import socket, os, re, hashlib, threading
 
+class AfkManager(threading.Thread):
+	def __init__(self, minion):
+        	threading.Thread.__init__(self)
+		self.minion=minion
+		self.afkEvent=threading.Event()
+
+	def run(self):
+		while 1:
+			if self.afkEvent.wait(3600) :
+				self.afkEvent.clear()
+				if self.minion.afk == True :
+					self.minion.afk = False
+			else:
+				if self.minion.afk == False :
+					self.minion.afk = True
+
 class SocketManager(threading.Thread):
 	def __init__(self, minion):
         	threading.Thread.__init__(self)
@@ -74,6 +90,9 @@ class Minion:
 		self.mySocket=SocketManager(self)
 		self.mySocket.setDaemon(True)
 		self.mySocket.start()
+		self.myAfk=AfkManager(self)
+		self.myAfk.setDaemon(True)
+		self.myAfk.start()
                 message="/add "+self.pid+"|"+nickname
                 self.sendMessage(message)
 
@@ -90,5 +109,7 @@ class Minion:
 			self.sendMessageTo(outMessage, peerPid, failed)
 
 	def sendMessage(self, outMessage):
+		self.myAfk.afkEvent.set()
                 for peerPid in self.mySocket.peers:
 			self.sendMessageTo(outMessage, peerPid)
+
