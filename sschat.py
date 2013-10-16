@@ -1,16 +1,18 @@
 #!/usr/bin/python
-import minion, screen, signal, help, re
+import minion, screen, signal, help, re, time, socket, threading
 
 class Sschat:
-	def __init__(self):
+	def __init__(self, channel="", nickname=""):
 		self.screen=screen.Screen()
                 signal.signal(signal.SIGINT, self.screen.clearInput)
                 signal.signal(signal.SIGHUP, self.cleanQuit)
 	        signal.signal(signal.SIGWINCH, self.screen.handlerResize)
-		self.screen.printMessage("Hi, which channel would you like to connect to ?")
-		channel = self.screen.strictInput()
-		self.screen.printMessage("What's your nickname ?")
-		nickname = self.screen.strictInput()
+		if channel == "":
+			self.screen.printMessage("Hi, which channel would you like to connect to ?")
+			channel = self.screen.strictInput()
+		if nickname == "":
+			self.screen.printMessage("What's your nickname ?")
+			nickname = self.screen.strictInput()
 		self.minion=minion.Minion(channel, self.screen, nickname)
 		self.screen.clearConvers()
                 self.screen.setTitle(channel, len(self.minion.mySocket.peers))
@@ -24,7 +26,23 @@ class Sschat:
 				self.minion.sendMessage("/msg "+chatMessage)
 				self.screen.printMessage(chatMessage)
 			else:
-				self.command(chatMessage[1:])
+				newChannel = self.command(chatMessage[1:])
+				if newChannel:
+					self.channelSwitch()
+					return (newChannel, self.minion.nickname)
+										
+        def channelSwitch(self):
+      		message= "/rem "+self.minion.pid+"|"+self.minion.nickname+"|ChannelSwitch"
+	        self.minion.sendMessage(message)
+        	self.screen.stopScreen()
+		self.minion.mySocket.active=False
+		self.minion.mySocket.sock.shutdown(socket.SHUT_RDWR)
+		self.minion.mySocket.sock.close()
+		self.screen.stopNotif()
+		self.minion.myAfk.active=False
+		self.minion.myAfk.afkEvent.set()
+		while threading.activeCount() != 1:
+			time.sleep(0.2)
 
         def cleanQuit(self, signum="", frame="", reason=""):
 		try:
@@ -70,6 +88,12 @@ class Sschat:
 		args = mess.split(" ")[1:]
 		if cmd == "clear":
 			self.screen.clearConvers()
+		elif cmd == "channel":
+                        channel = args[0]
+                        if re.match("^[A-Za-z]*$", channel) and len(channel) <= 12:
+				return channel
+                        else:
+                                self.screen.printMessage("Bad channel name.")
 		elif cmd == "help":
 			self.screen.scrollPrinter(help.help)
 		elif cmd == "list":
@@ -97,9 +121,6 @@ class Sschat:
                                 self.screen.printMessage(chatMessage)
 				self.minion.afk = True
 			else :
-				chatMessage = self.minion.nickname+" is back."
-                                self.minion.sendMessage("/msg "+chatMessage)
-                                self.screen.printMessage(chatMessage)
 				self.minion.afk = False
 		elif cmd == "nickname":
 			nick = args[0]
@@ -135,4 +156,7 @@ class Sschat:
 			self.screen.printMessage("/"+mess)
 
 chat=Sschat()
-chat.main()
+while 1 :
+	newChannel, nickname = chat.main()
+	chat=None
+	chat=Sschat(newChannel, nickname)

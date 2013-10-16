@@ -5,9 +5,10 @@ class AfkManager(threading.Thread):
         	threading.Thread.__init__(self)
 		self.minion=minion
 		self.afkEvent=threading.Event()
+		self.active = True
 
 	def run(self):
-		while 1:
+		while self.active:
 			if self.afkEvent.wait(3600) :
 				self.afkEvent.clear()
 				if self.minion.afk == True :
@@ -15,6 +16,7 @@ class AfkManager(threading.Thread):
 			else:
 				if self.minion.afk == False :
 					self.minion.afk = True
+		return
 
 class SocketManager(threading.Thread):
 	def __init__(self, minion):
@@ -24,11 +26,15 @@ class SocketManager(threading.Thread):
 		self.initPeers()
 	        self.sock=socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
 		self.sock.bind(self.address)
+		self.active=True
 
 	def run(self):
-        	while 1:
+        	while self.active==True:
                 	incomingMessage = self.sock.recvfrom(4096)
-                	self.handlerGetComm(incomingMessage[0])
+			try:
+	                	self.handlerGetComm(incomingMessage[0])
+			except:
+				continue
 
 	def handlerGetComm(self, incMess):
 		if incMess[0] == "/":
@@ -112,4 +118,3 @@ class Minion:
 		self.myAfk.afkEvent.set()
                 for peerPid in self.mySocket.peers:
 			self.sendMessageTo(outMessage, peerPid)
-
