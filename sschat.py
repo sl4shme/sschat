@@ -93,8 +93,8 @@ class Sschat:
 		args = mess.split(" ")[1:]
 		if cmd == "clear":
 			self.screen.clearConvers()
-		elif cmd == "text.help":
-			self.screen.scrollPrinter(help.help)
+		elif cmd == "help":
+			self.screen.scrollPrinter(text.help)
 		elif cmd == "encrypt" and len(args) == 1:
 			if args[0] == "on" and self.minion.encrypt == False:
 				self.screen.printMessage("Please enter the private key.")
