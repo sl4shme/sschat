@@ -88,32 +88,11 @@ class Sschat:
 		args = mess.split(" ")[1:]
 		if cmd == "clear":
 			self.screen.clearConvers()
-		elif cmd == "channel":
-                        channel = args[0]
-                        if re.match("^[A-Za-z]*$", channel) and len(channel) <= 12:
-				return channel
-                        else:
-                                self.screen.printMessage("Bad channel name.")
 		elif cmd == "help":
 			self.screen.scrollPrinter(help.help)
 		elif cmd == "list":
 			self.screen.printMessage("Peoples present in channel :")
 			self.minion.sendMessage("/get "+self.minion.pid)
-		elif cmd == "quit":
-			reason=' '.join(args)
-			if reason=="":
-				reason="None"
-			self.cleanQuit(0, 0, reason)
-		elif cmd == "timestamp":
-			if args[0] == "on":
-				self.screen.timestamp=True
-			if args[0] == "off":
-				self.screen.timestamp=False
-		elif cmd == "notif":
-			if args[0] == "on":
-				self.screen.startNotif()
-			if args[0] == "off":
-				self.screen.stopNotif()
 		elif cmd == "afk":
 			if self.minion.afk == False :
 				chatMessage = self.minion.nickname+" is now AFK."
@@ -122,7 +101,28 @@ class Sschat:
 				self.minion.afk = True
 			else :
 				self.minion.afk = False
-		elif cmd == "nickname":
+		elif cmd == "quit":
+			reason=' '.join(args)
+			if reason=="":
+				reason="None"
+			self.cleanQuit(0, 0, reason)
+		elif cmd == "channel" and len(args) == 1:
+                        channel = args[0]
+                        if re.match("^[A-Za-z]*$", channel) and len(channel) <= 12:
+				return channel
+                        else:
+                                self.screen.printMessage("Bad channel name.")
+		elif cmd == "timestamp" and len(args) == 1:
+			if args[0] == "on":
+				self.screen.timestamp=True
+			if args[0] == "off":
+				self.screen.timestamp=False
+		elif cmd == "notif" and len(args) == 1:
+			if args[0] == "on":
+				self.screen.startNotif()
+			if args[0] == "off":
+				self.screen.stopNotif()
+		elif cmd == "nickname" and len(args) == 1:
 			nick = args[0]
 			if re.match("^[A-Za-z]*$", nick) and len(nick) <= 12:
 				chatMessage = self.minion.nickname+"("+self.minion.pid+") is now known as "+nick
@@ -131,17 +131,16 @@ class Sschat:
 				self.minion.nickname=nick
 			else:
 				self.screen.printMessage("Bad nickname.")
-		elif cmd == "bug":
+		elif cmd == "bug" and len(args) >= 1:
 			mess=' '.join(args)
 			self.bug(mess)
-		elif cmd == "pm":
-			if len(args) >= 2:
-				pid=args[0]
-				message=' '.join(args[1:])
-				outMessage="/msg PM from "+self.minion.nickname+"("+self.minion.pid+") : "+message
-		        	self.minion.sendMessageTo(outMessage, pid)		
-				self.screen.printMessage("PM to "+pid+" : "+message)
-		elif cmd == "history":
+		elif cmd == "pm" and len(args) >= 2:
+			pid=args[0]
+			message=' '.join(args[1:])
+			outMessage="/msg PM from "+self.minion.nickname+"("+self.minion.pid+") : "+message
+	        	self.minion.sendMessageTo(outMessage, pid)		
+			self.screen.printMessage("PM to "+pid+" : "+message)
+		elif cmd == "history"  and len(args) <= 1:
 			if len(args) == 0:
 				if self.screen.doHistory == 1:
 					self.screen.scrollPrinter(self.screen.history)
