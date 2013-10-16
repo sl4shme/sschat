@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import minion, screen, signal, help, re, time, socket, threading, crypt
+import minion, screen, signal, text, re, time, socket, threading, crypt
 
 class Sschat:
 	def __init__(self, channel="", nickname=""):
@@ -93,7 +93,7 @@ class Sschat:
 		args = mess.split(" ")[1:]
 		if cmd == "clear":
 			self.screen.clearConvers()
-		elif cmd == "help":
+		elif cmd == "text.help":
 			self.screen.scrollPrinter(help.help)
 		elif cmd == "encrypt" and len(args) == 1:
 			if args[0] == "on" and self.minion.encrypt == False:
@@ -164,8 +164,6 @@ class Sschat:
 				self.screen.history.clear()
 			elif args[0] == "clear":
 				self.screen.history.clear()
-		else:
-			self.screen.printMessage("/"+mess)
 
 chat=Sschat()
 while 1 :

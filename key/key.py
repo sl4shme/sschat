@@ -1,13 +1,20 @@
 #!/usr/bin/python
 import os, re, signal
 
-def cleanQuit(signum, frame):
+def cleanQuit(signum="", frame=""):
+	Print "Bye !"
 	quit()
 
 signal.signal(signal.SIGINT, cleanQuit)
 
-print "This isn't even the pre-pre-alpha phase, please don't attack this server."
 
+
+
+
+
+
+
+print "This is an alpha version, please don't attack this server."
 ok=False
 while ok == False :
         print "Paste your one-line ssh publikey (RSA 2048 bits or DSA):"
@@ -46,4 +53,4 @@ print "\n\nPlease note that this server will not keep any trace of anything but 
 print "Please remember that this service comes with NO FUCKING GUARANTEE"
 print "\nEnter to quit."
 raw_input()
-quit()
+cleanQuit()
