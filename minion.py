@@ -1,4 +1,4 @@
-import socket, os, re, hashlib, threading
+import socket, os, re, hashlib, threading, crypt
 
 class AfkManager(threading.Thread):
 	def __init__(self, minion):
@@ -46,6 +46,8 @@ class SocketManager(threading.Thread):
                                 self.handlerRemPeer(incMess[5:])
                         if incMess[1:4] == "msg":
                                 self.handlerGetMess(incMess[5:])
+                        if incMess[1:4] == "enc":
+                                self.handlerGetEnc(incMess[5:])
 
         def handlerAddPeer(self, mess):
 		pid, name = mess.split("|")
@@ -62,10 +64,17 @@ class SocketManager(threading.Thread):
 		except:
 			pass
 
-        def handlerGetMess(self, message):
+        def handlerGetMess(self, mess):
 		if self.minion.screen.doNotif == True:
 			self.minion.screen.notif.flash = True
-		self.minion.screen.printMessage(str(message))
+		self.minion.screen.printMessage(str(mess))
+
+        def handlerGetEnc(self, mess):
+		if self.minion.encrypt == True:
+			mess = self.minion.crypto.decrypt(mess)
+		else :
+			mess = '<Encrypted>'
+		self.handlerGetMess(mess)
 
         def handlerGetNick(self, pid):
 		mess="/msg "+self.minion.nickname+" "+self.minion.pid
@@ -93,6 +102,7 @@ class Minion:
 		self.channelHash=hashlib.sha256(self.channel).hexdigest()
 		self.nickname=nickname
 		self.afk=False
+		self.encrypt=False
 		self.mySocket=SocketManager(self)
 		self.mySocket.setDaemon(True)
 		self.mySocket.start()

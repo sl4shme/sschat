@@ -11,4 +11,5 @@ help=["Here are available commands :",
 "/bug <message> : Send a bug / suggestion report.",
 "/list : List peoples in channel.",
 "/afk : Toggle afk.",
-"/notif <on|off> : Toggle visual flash notification on new message."]
+"/notif <on|off> : Toggle visual flash notification on new message.",
+"/encrypt <on|off> : Toggle encryption."]

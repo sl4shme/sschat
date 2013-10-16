@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import minion, screen, signal, help, re, time, socket, threading
+import minion, screen, signal, help, re, time, socket, threading, crypt
 
 class Sschat:
 	def __init__(self, channel="", nickname=""):
@@ -23,8 +23,13 @@ class Sschat:
 			chatMessage= self.screen.getInput()
 			if chatMessage[0] != "/":
 				chatMessage = self.minion.nickname+" : "+chatMessage
-				self.minion.sendMessage("/msg "+chatMessage)
-				self.screen.printMessage(chatMessage)
+				if self.minion.encrypt == False:
+					self.minion.sendMessage("/msg "+chatMessage)
+				else :
+					chatMessage = "<e> "+chatMessage
+		                        encMessage = self.minion.crypto.encrypt(chatMessage)
+		                        self.minion.sendMessage("/enc "+encMessage)
+                        	self.screen.printMessage(chatMessage)
 			else:
 				newChannel = self.command(chatMessage[1:])
 				if newChannel:
@@ -90,6 +95,14 @@ class Sschat:
 			self.screen.clearConvers()
 		elif cmd == "help":
 			self.screen.scrollPrinter(help.help)
+		elif cmd == "encrypt" and len(args) == 1:
+			if args[0] == "on" and self.minion.encrypt == False:
+				self.screen.printMessage("Please enter the private key.")
+				self.minion.crypto=crypt.Crypt(self.screen.getInput())
+				self.minion.encrypt=True
+			if args[0] == "off" and self.minion.encrypt == True:
+				del self.minion.crypto
+				self.minion.encrypt=False
 		elif cmd == "list":
 			self.screen.printMessage("Peoples present in channel :")
 			self.minion.sendMessage("/get "+self.minion.pid)
@@ -157,5 +170,5 @@ class Sschat:
 chat=Sschat()
 while 1 :
 	newChannel, nickname = chat.main()
-	chat=None
+	del chat
 	chat=Sschat(newChannel, nickname)
