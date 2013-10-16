@@ -13,13 +13,17 @@ while ok == False :
         text.printer(text.ask)
         entry = str(raw_input())
         if entry == "help":
-                os=raw_input("(l)inux / (m)ac / (w)indows ?")
+                os=raw_input("(l)inux / (m)ac / (a)ndroid / (w)indows ?")
                 if os == "l":
                         text.printer(text.linuxHelp)
                 elif os == "m":
                         text.printer(text.linuxHelp)
                 elif os == "w":
                         text.printer(text.windowsHelp)
+                elif os == "a":
+                        text.printer(text.androidHelp)
+		else:
+			continue
                 raw_input("Ctrl+c to quit / Enter to go back")
                 continue
 
@@ -28,7 +32,7 @@ while ok == False :
                 key = entry[:372]
                 type = 1
                 if len(key) != 372:
-                        print "Bad key."
+                        print "Bad key.(Bad lenght)"
                         continue
 
         elif entry[0:7] == "ssh-dss":
@@ -36,19 +40,19 @@ while ok == False :
                 key = entry[:580]
                 type = 2
                 if len(key) != 580:
-                        print "Bad key."
+                        print "Bad key.(Bad lenght)"
                         continue
 
         else:
-                print "Bad key."
+                print "Bad key. (Bad begining)"
                 continue
 
-        if re.match("^[A-Za-z0-9+/]*$", key):
+        if re.match("^[A-Za-z0-9+=/]*$", key):
                 line = "sudo /sschat/key/keycat.sh '"+str(type)+"' '"+key+"'"
                 os.system(line)
                 ok=True
         else:
-                print "Bad key."
+                print "Bad key.(Bad characters)"
                 continue
 
 text.printer(text.congrats)
