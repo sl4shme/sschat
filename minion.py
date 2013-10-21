@@ -65,6 +65,10 @@ class SocketManager(threading.Thread):
 			pass
 
         def handlerGetMess(self, mess):
+                expr = re.compile(r'.*%s.*' % self.minion.nickname)
+                match = expr.search(mess)
+                if match:
+                        mess = "* "+mess
 		if self.minion.screen.doNotif == True:
 			self.minion.screen.notif.flash = True
 		self.minion.screen.printMessage(str(mess))
