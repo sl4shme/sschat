@@ -95,10 +95,17 @@ class Sschat:
 			self.screen.clearConvers()
 		elif cmd == "help":
 			self.screen.scrollPrinter(text.help)
-		elif cmd == "paste":
-			longLine = self.screen.getPaste()
-			if longLine != "" :
-				self.screen.printMessage(longLine)
+                elif cmd == "paste":
+                        longLine = self.screen.getPaste()
+                        if longLine != "" :
+                                chatMessage = self.minion.nickname+" : "+longLine
+                                if self.minion.encrypt == False:
+                                        self.minion.sendMessage("/msg "+chatMessage)
+                                else :
+                                        chatMessage = "<e> "+chatMessage
+                                        encMessage = self.minion.crypto.encrypt(chatMessage)
+                                        self.minion.sendMessage("/enc "+encMessage)
+                                self.screen.printMessage(chatMessage)
 		elif cmd == "encrypt" and len(args) == 1:
 			if args[0] == "on" and self.minion.encrypt == False:
 				self.screen.printMessage("Please enter the private key.")
