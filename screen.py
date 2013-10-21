@@ -1,4 +1,4 @@
-import curses, curses.textpad, time, collections, scroll, re, threading
+import curses, curses.textpad, curses.ascii, time, collections, scroll, re, threading
 
 class Notifier(threading.Thread):
         def __init__(self, interval):
@@ -65,6 +65,32 @@ class Screen:
                         if re.match("^[A-Za-z]*$", input) and len(input) <= 12:
                                 return input
                         self.printMessage("Bad input.")
+
+	def pasteValidator(self, ch):
+                if self.dualChar == 1:
+                        self.dualChar=0
+                        if ch == 169 or ch == 168 or ch == 170:
+                                ch=101
+                        if ch == 160:
+                                ch=97
+                        if ch == 185:
+                                ch=117
+                        if ch == 167:
+                                ch=99
+                if ch == 195:
+                        self.dualChar=1
+		if ch == 10:
+			return ch
+                elif self.dualChar == 0:
+                	self.paste += curses.ascii.unctrl(ch)
+                        return 0
+
+	def getPaste(self):
+		self.paste=""
+		self.printMessage("Paste your text (containing no new line), and press enter.")
+	        self.inputBox.edit(self.pasteValidator)
+		if len(self.paste) < 500 :
+			return self.paste
 
         def validator(self, ch):
 		if self.doNotif == True and self.notif.flash == True:
