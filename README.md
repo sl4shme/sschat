@@ -22,11 +22,11 @@ crypt.py
 crypt.pyc  
 .hushlogin  
 key  
-     .hushlogin  
-     keycat.sh  
-     key.py   
-     text.py  
-     text.pyc  
+-----.hushlogin  
+-----keycat.sh  
+-----key.py   
+-----text.py  
+-----text.pyc  
 minion.py  
 minion.pyc  
 motb  
@@ -37,7 +37,7 @@ scroll.py
 scroll.pyc  
 sschat.py  
 .ssh  
-     authorized_keys  
+-----authorized_keys  
 text.py  
 text.pyc  
 TODO  
