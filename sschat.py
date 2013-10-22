@@ -158,6 +158,16 @@ class Sschat:
 		elif cmd == "bug" and len(args) >= 1:
 			mess=' '.join(args)
 			self.bug(mess)
+                elif cmd == "me" and len(args) >= 1:
+                        mess=' '.join(args)
+                        chatMessage = self.minion.nickname+" "+mess
+                        if self.minion.encrypt == False:
+                                self.minion.sendMessage("/msg "+chatMessage)
+                        else :
+                                chatMessage = "<e> "+chatMessage
+                                encMessage = self.minion.crypto.encrypt(chatMessage)
+                                self.minion.sendMessage("/enc "+encMessage)
+                        self.screen.printMessage(chatMessage)
 		elif cmd == "pm" and len(args) >= 2:
 			pid=args[0]
 			message=' '.join(args[1:])
