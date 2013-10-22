@@ -3,7 +3,7 @@ chown sschat:sschat ./*
 chown sschat:sschat .
 chown key:key key
 
-chmod 500 .
+chmod 501 .
 chmod 500 key
 chmod 500 .ssh
 

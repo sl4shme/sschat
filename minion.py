@@ -65,7 +65,7 @@ class SocketManager(threading.Thread):
 			pass
 
         def handlerGetMess(self, mess):
-                expr = re.compile(r'.*%s.*' % self.minion.nickname)
+                expr = re.compile(r'\b%s\b' % self.minion.nickname)
                 match = expr.search(mess)
                 if match:
                         mess = "* "+mess
