@@ -114,16 +114,20 @@ class Sschat:
 			if args[0] == "off" and self.minion.encrypt == True:
 				del self.minion.crypto
 				self.minion.encrypt=False
+				self.screen.printMessage("Encryption disabled.")
 		elif cmd == "list":
 			self.screen.printMessage("Peoples present in channel :")
 			self.minion.sendMessage("/get "+self.minion.pid)
-		elif cmd == "afk":
-			if self.minion.afk == False :
+		elif cmd == "afk" and len(args) == 1:
+			if args[0] == "on":
 				chatMessage = self.minion.nickname+" is now AFK."
                                 self.minion.sendMessage("/msg "+chatMessage)
                                 self.screen.printMessage(chatMessage)
 				self.minion.afk = True
-			else :
+			if args[0] == "off":
+				chatMessage = self.minion.nickname+" is back."
+                                self.minion.sendMessage("/msg "+chatMessage)
+                                self.screen.printMessage(chatMessage)
 				self.minion.afk = False
 		elif cmd == "quit":
 			reason=' '.join(args)
@@ -144,8 +148,10 @@ class Sschat:
 		elif cmd == "notif" and len(args) == 1:
 			if args[0] == "on":
 				self.screen.startNotif()
+				self.screen.printMessage("Visual notification enabled.")
 			if args[0] == "off":
 				self.screen.stopNotif()
+				self.screen.printMessage("Visual notification disabled.")
 		elif cmd == "nickname" and len(args) == 1:
 			nick = args[0]
 			if re.match("^[A-Za-z]*$", nick) and len(nick) <= 12:
@@ -180,9 +186,11 @@ class Sschat:
 					self.screen.scrollPrinter(self.screen.history)
 			elif args[0] == "on":
 				self.screen.doHistory=1
+				self.screen.printMessage("History enabled.")
 			elif args[0] == "off":
 				self.screen.doHistory=0
 				self.screen.history.clear()
+				self.screen.printMessage("History disabled.")
 			elif args[0] == "clear":
 				self.screen.history.clear()
 

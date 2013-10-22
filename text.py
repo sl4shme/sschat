@@ -16,5 +16,5 @@ help=["Here are available commands :",
 " ",
 "/timestamp <on|off> : Enable/disable line timestamping.",
 "/notif <on|off> : Toggle visual flash notification on new message.",
-"/afk : Toggle afk.",
+"/afk <on|off> : Toggle afk.",
 "/encrypt <on|off> : Toggle encryption."]
