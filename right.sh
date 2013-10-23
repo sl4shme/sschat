@@ -12,7 +12,7 @@ chmod 600 bugReport
 chmod 400 *.py
 chmod 400 mot*
 chmod 400 README.md
-chmod u+x sschat.py
+chmod u+x wrapper.py
 
 chmod 500 key/key*
 chmod 400 key/text.py

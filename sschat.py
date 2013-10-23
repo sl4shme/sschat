@@ -1,12 +1,13 @@
-#!/usr/bin/python
-import minion, screen, signal, text, re, time, socket, threading, crypt
+import minion, screen, signal, text, re, time, socket, threading, crypt, curses
 
 class Sschat:
-	def __init__(self, channel="", nickname=""):
+	def __init__(self, channel="", nickname="", history=""):
 		self.screen=screen.Screen()
                 signal.signal(signal.SIGINT, self.screen.clearInput)
                 signal.signal(signal.SIGHUP, self.cleanQuit)
 	        signal.signal(signal.SIGWINCH, self.screen.handlerResize)
+		self.update = False
+	        signal.signal(signal.SIGUSR1, self.handlerUpdate)
 		if channel == "":
 			self.screen.printMessage("Hi, which channel would you like to connect to ?")
 			channel = self.screen.strictInput()
@@ -16,11 +17,18 @@ class Sschat:
 		self.minion=minion.Minion(channel, self.screen, nickname)
 		self.screen.clearConvers()
                 self.screen.setTitle(channel, len(self.minion.mySocket.peers))
+		if history != "":
+			self.screen.history=history
+			self.screen.printHistory()
 		self.motd()
 
 	def main(self):
 		while 1:
 			chatMessage= self.screen.getInput()
+			if self.update == True :
+				self.screen.printMessage("You are going to be upgraded, please wait 5 seconds")
+				self.channelSwitch("Update")
+				return (self.minion.channel, self.minion.nickname, self.screen.history)
 			if chatMessage[0] != "/":
 				chatMessage = self.minion.nickname+" : "+chatMessage
 				if self.minion.encrypt == False:
@@ -34,10 +42,11 @@ class Sschat:
 				newChannel = self.command(chatMessage[1:])
 				if newChannel:
 					self.channelSwitch()
-					return (newChannel, self.minion.nickname)
-										
-        def channelSwitch(self):
-      		message= "/rem "+self.minion.pid+"|"+self.minion.nickname+"|ChannelSwitch"
+					return (newChannel, self.minion.nickname, "")
+
+				
+        def channelSwitch(self, reason="ChannelSwitch"):
+      		message= "/rem "+self.minion.pid+"|"+self.minion.nickname+"|"+reason
 	        self.minion.sendMessage(message)
         	self.screen.stopScreen()
 		self.minion.mySocket.active=False
@@ -48,6 +57,11 @@ class Sschat:
 		self.minion.myAfk.afkEvent.set()
 		while threading.activeCount() != 1:
 			time.sleep(0.2)
+
+	def handlerUpdate(self, signum, frame):
+		self.update = True
+                self.screen.interruptInput=True
+                curses.ungetch(curses.ascii.NL)
 
         def cleanQuit(self, signum="", frame="", reason=""):
 		try:
@@ -193,9 +207,3 @@ class Sschat:
 				self.screen.printMessage("History disabled.")
 			elif args[0] == "clear":
 				self.screen.history.clear()
-
-chat=Sschat()
-while 1 :
-	newChannel, nickname = chat.main()
-	del chat
-	chat=Sschat(newChannel, nickname)

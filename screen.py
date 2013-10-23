@@ -19,6 +19,7 @@ class Screen:
 		self.isInScroll=0
 		self.dualChar=0
 		self.resize=resize
+		self.interruptInput=False
 		self.mainWindow=curses.initscr()
 		self.ySize, self.xSize = self.mainWindow.getmaxyx()
 		self.titleWindow = curses.newwin(1, self.xSize, 0, 0)
@@ -51,6 +52,9 @@ class Screen:
 	def getInput(self):
 		while 1:
 			inputMessage = self.inputBox.edit(self.validator)
+			if self.interruptInput == True:
+                		self.interruptInput=False
+				return "update"
 			if self.resize == 1:
 				self.resize=0
 				continue
@@ -133,6 +137,11 @@ class Screen:
 		curses.endwin()
 		self.__init__(1)
 		curses.ungetch(curses.ascii.NL)
+		self.printHistory()
+		self.setTitle(self.channel,self.peersCount)
+		curses.curs_set(1)
+
+	def printHistory(self):
 		oldH = self.doHistory
 		oldT = self.timestamp
 		self.mainWindow.clear()
@@ -142,8 +151,6 @@ class Screen:
 			self.printMessage(histLine)
 		self.doHistory = oldH
 		self.timestamp = oldT
-		self.setTitle(self.channel,self.peersCount)
-		curses.curs_set(1)
 
 	def scrollPrinter(self, toPrint):
 		self.isInScroll=1
