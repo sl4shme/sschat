@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sschat
+import sschat, sys, re
 
 def moduleUpgrade():
 	import crypt
@@ -15,7 +15,19 @@ def moduleUpgrade():
 	import text
 	text = reload(text)
 
-chat=sschat.Sschat()
+channel=""
+nick=""
+try:
+        args=sys.argv[2]
+        args=args.split(" ")
+        if args[0] and re.match("^[A-Za-z]*$", args[0]) and len(args[0]) <= 12:
+                channel=args[0]
+        if args[1] and re.match("^[A-Za-z]*$", args[1]) and len(args[1]) <= 12:
+                nick=args[1]
+except:
+        pass
+
+chat=sschat.Sschat(channel, nick)
 while 1 :
         newChannel, nickname, history = chat.main()
         del chat
