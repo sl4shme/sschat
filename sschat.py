@@ -1,4 +1,4 @@
-import minion, screen, signal, text, re, time, socket, threading, crypt, curses
+import minion, screen, signal, text, time, socket, threading, crypt, curses, tools
 
 class Sschat:
 	def __init__(self, channel="", nickname="", history=""):
@@ -150,7 +150,7 @@ class Sschat:
 			self.cleanQuit(0, 0, reason)
 		elif cmd == "channel" and len(args) == 1:
                         channel = args[0]
-                        if re.match("^[A-Za-z]*$", channel) and len(channel) <= 12:
+                        if tools.validateName(channel):
 				return channel
                         else:
                                 self.screen.printMessage("Bad channel name.")
@@ -168,7 +168,7 @@ class Sschat:
 				self.screen.printMessage("Visual notification disabled.")
 		elif cmd == "nickname" and len(args) == 1:
 			nick = args[0]
-			if re.match("^[A-Za-z]*$", nick) and len(nick) <= 12:
+			if tools.validateName(nick):
 				chatMessage = self.minion.nickname+"("+self.minion.pid+") is now known as "+nick
 				self.minion.sendMessage("/msg "+chatMessage)
 				self.screen.printMessage(chatMessage)

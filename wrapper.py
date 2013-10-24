@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sschat, sys, re
+import sschat, sys, tools
 
 def moduleUpgrade():
 	import crypt
@@ -14,15 +14,17 @@ def moduleUpgrade():
 	sschat = reload(sschat)
 	import text
 	text = reload(text)
+	import tools
+	tools = reload(tools)
 
 channel=""
 nick=""
 try:
         args=sys.argv[2]
         args=args.split(" ")
-        if args[0] and re.match("^[A-Za-z]*$", args[0]) and len(args[0]) <= 12:
+        if tools.validateName(args[0]):
                 channel=args[0]
-        if args[1] and re.match("^[A-Za-z]*$", args[1]) and len(args[1]) <= 12:
+        if tools.validateName(args[1]):
                 nick=args[1]
 except:
         pass

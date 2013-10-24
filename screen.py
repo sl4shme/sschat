@@ -1,4 +1,4 @@
-import curses, curses.textpad, curses.ascii, time, collections, scroll, re, threading
+import curses, curses.textpad, curses.ascii, time, collections, scroll, threading, tools
 
 class Notifier(threading.Thread):
         def __init__(self, interval):
@@ -66,7 +66,7 @@ class Screen:
         def strictInput(self):
                 while 1:
                         input = self.getInput()
-                        if re.match("^[A-Za-z]*$", input) and len(input) <= 12:
+                        if tools.validateName(input):
                                 return input
                         self.printMessage("Bad input.")
 
