@@ -97,6 +97,10 @@ class Screen:
 			return self.paste
 
         def validator(self, ch):
+                if ch == 262 :
+                        ch = curses.ascii.SOH
+                if ch == 360 :
+                        ch = curses.ascii.ENQ
 		if self.doNotif == True and self.notif.flash == True:
 			self.notif.flash=False
                 if self.dualChar == 1:
