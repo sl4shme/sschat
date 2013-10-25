@@ -1,4 +1,4 @@
-import curses, curses.textpad, curses.ascii, time, collections, scroll, threading, tools
+import curses, curses.textpad, curses.ascii, time, collections, scroll, threading, tools, text, re
 
 class Notifier(threading.Thread):
         def __init__(self, interval):
@@ -51,6 +51,7 @@ class Screen:
 
 	def getInput(self):
 		while 1:
+			self.autocomplete = False
  			try:
  				inputMessage = self.inputBox.edit(self.validator)
  			except:
@@ -99,7 +100,29 @@ class Screen:
 		if len(self.paste) < 500 :
 			return self.paste
 
+	def complete(self, ch):
+		if ch == 263:
+			try:
+				self.cmd = self.cmd[:-1]
+			except :
+				pass
+		if ch == 9 :
+			for arr in text.commands:
+				if self.cmd == arr[0]:
+					self.cmd = arr[1]
+					self.inputWindow.clear()
+					self.inputWindow.addstr("/"+arr[1]+" ")
+		else:
+			ch = curses.ascii.unctrl(ch)
+			if re.match("[a-z]", ch):
+				self.cmd += ch
+
         def validator(self, ch):
+		if ch == 47 and self.autocomplete == False:
+			self.autocomplete = True
+			self.cmd = ""
+		if self.autocomplete == True :
+			self.complete(ch)
                 if ch == 4 :
  			raise KeyboardInterrupt
                 if ch == 262 :
