@@ -14,7 +14,11 @@ class Sschat:
 		if nickname == "":
 			self.screen.printMessage("What's your nickname ?")
 			nickname = self.screen.strictInput()
-		self.minion=minion.Minion(channel, self.screen, nickname)
+                try :
+                        tools.getSpawnLock()
+                        self.minion=minion.Minion(channel, self.screen, nickname)
+                finally:
+                        tools.releaseSpawnLock()
 		self.screen.clearConvers()
                 self.screen.setTitle(channel, len(self.minion.mySocket.peers))
 		if history != "":

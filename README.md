@@ -8,6 +8,11 @@ s s h is a no-Log, IRC type, ssh securised, chat.
 ```
 ### INSTALL
 
+Prerequisite :  
+
+-Python 2.7
+-Sudo
+
 
 First, clone or download sschat:
 
@@ -84,6 +89,9 @@ Paste your 2048 bits RSA / 1024 Bits DSA SSH publikey.
 Connect with ssh on your server with sschat as the user.
 Here you are!
 
+You can pass the channel and your nickname as arguments like this :  
+
+ssh -t sschat@server channel nickname  
 
 ### COMMANDS
 
