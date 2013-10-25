@@ -51,7 +51,10 @@ class Screen:
 
 	def getInput(self):
 		while 1:
-			inputMessage = self.inputBox.edit(self.validator)
+ 			try:
+ 				inputMessage = self.inputBox.edit(self.validator)
+ 			except:
+ 				inputMessage = "/quit " 
 			if self.interruptInput == True:
                 		self.interruptInput=False
 				return "update"
@@ -97,6 +100,8 @@ class Screen:
 			return self.paste
 
         def validator(self, ch):
+                if ch == 4 :
+ 			raise KeyboardInterrupt
                 if ch == 262 :
                         ch = curses.ascii.SOH
                 if ch == 360 :
