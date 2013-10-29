@@ -1,4 +1,5 @@
-import minion, screen, signal, text, time, socket, threading, crypt, curses, tools
+import minion, screen, text, tools, crypt
+import signal, time, socket, threading, curses, collections
 
 class Sschat:
 	def __init__(self, channel="", nickname="", history=""):
@@ -113,6 +114,10 @@ class Sschat:
 			self.screen.clearConvers()
 		elif cmd == "help":
 			self.screen.scrollPrinter(text.help)
+                elif cmd == "plop":
+                        self.screen.printMessage("Plop !")
+                elif cmd == "id":
+                        self.screen.printMessage("Your id : "+str(self.minion.pid))
                 elif cmd == "paste":
                         longLine = self.screen.getPaste()
                         if longLine != "" :
@@ -163,10 +168,16 @@ class Sschat:
 				self.screen.timestamp=True
 			if args[0] == "off":
 				self.screen.timestamp=False
-		elif cmd == "notif" and len(args) == 1:
+		elif cmd == "notif" and len(args) <= 2:
 			if args[0] == "on":
-				self.screen.startNotif()
-				self.screen.printMessage("Visual notification enabled.")
+				try :
+					interval = int(args[1])
+					if interval < 1 :
+						raise
+				except :
+					interval = 5
+				self.screen.startNotif(interval)
+				self.screen.printMessage("Visual notification enabled. (timer = "+str(interval)+")")
 			if args[0] == "off":
 				self.screen.stopNotif()
 				self.screen.printMessage("Visual notification disabled.")
@@ -194,10 +205,16 @@ class Sschat:
                         self.screen.printMessage(chatMessage)
 		elif cmd == "pm" and len(args) >= 2:
 			pid=args[0]
-			message=' '.join(args[1:])
-			outMessage="/msg PM from "+self.minion.nickname+"("+self.minion.pid+") : "+message
-	        	self.minion.sendMessageTo(outMessage, pid)		
-			self.screen.printMessage("PM to "+pid+" : "+message)
+			try :
+				int(pid)
+				if pid < 1 :
+					raise
+				message=' '.join(args[1:])
+				outMessage="/msg PM from "+self.minion.nickname+"("+self.minion.pid+") : "+message
+	        		self.minion.sendMessageTo(outMessage, pid)		
+				self.screen.printMessage("PM to "+pid+" : "+message)
+			except :
+				pass
 		elif cmd == "history"  and len(args) <= 1:
 			if len(args) == 0:
 				if self.screen.doHistory == 1:
@@ -211,3 +228,15 @@ class Sschat:
 				self.screen.printMessage("History disabled.")
 			elif args[0] == "clear":
 				self.screen.history.clear()
+			else :
+				try :
+					newlen = int(args[0])
+					if newlen < 1 or newlen > 200:
+						raise
+					tmp = self.screen.history
+					self.screen.history=collections.deque(maxlen=newlen)
+					for l in tmp:
+						self.screen.history.append(l)
+					self.screen.printMessage("New history length : "+str(newlen))
+				except:
+					pass

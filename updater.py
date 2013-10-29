@@ -1,9 +1,8 @@
 #!/usr/bin/python
-import re, os, time
+import re, os, time, tools
 
 def initPeers():
 	peers=[]
-#        expr = re.compile(r'.*9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08.*')
         expr = re.compile(r'.*\|.*')
         for line in open("/proc/net/unix"):
         	match = expr.search(line)
@@ -15,6 +14,15 @@ def initPeers():
                 	peers.append(matchLine[0])
 	return peers
 
+print "Broadcast message ?"
+mess = raw_input()
+if mess != "":
+        tools.systemMessage(mess)
+
 for peer in initPeers():
-	os.kill(int(peer), int(10))
-	time.sleep(1)
+        print "Updating "+str(peer)
+        os.kill(int(peer), int(10))
+        time.sleep(1)
+
+print "Done"
+
